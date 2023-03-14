@@ -258,7 +258,7 @@ func (cmdDeal *CmdDeal) sendDeals2Miner(taskName string, outputDir string, fileD
 					deals = append(deals, &libmodel.DealInfo{
 						MinerFid:   dealConfig.MinerFid,
 						DealCid:    "",
-						StartEpoch: 0,
+						StartEpoch: int(dealConfig.StartEpoch),
 						Cost:       "fail",
 					})
 					logs.GetLogger().Error(err)
@@ -276,7 +276,7 @@ func (cmdDeal *CmdDeal) sendDeals2Miner(taskName string, outputDir string, fileD
 					deals = append(deals, &libmodel.DealInfo{
 						MinerFid:   dealConfig.MinerFid,
 						DealCid:    "",
-						StartEpoch: 0,
+						StartEpoch: int(dealConfig.StartEpoch),
 						Cost:       "fail",
 					})
 					logs.GetLogger().Error(err)
