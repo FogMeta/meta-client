@@ -246,7 +246,7 @@ func (cmdDeal *CmdDeal) sendDeals2Miner(taskName string, outputDir string, fileD
 			return nil, err
 		}
 
-		deals := []*libmodel.DealInfo{}
+		var deals []*libmodel.DealInfo
 		for _, minerFid := range cmdDeal.MinerFids {
 			dealConfig.MinerFid = minerFid
 
@@ -267,6 +267,12 @@ func (cmdDeal *CmdDeal) sendDeals2Miner(taskName string, outputDir string, fileD
 			} else {
 				dealCid, err := lotusClient.LotusClientStartDeal(&dealConfig)
 				if err != nil {
+					deals = append(deals, &libmodel.DealInfo{
+						MinerFid:   dealConfig.MinerFid,
+						DealCid:    "",
+						StartEpoch: 0,
+						Cost:       "fail",
+					})
 					logs.GetLogger().Error(err)
 					continue
 				}
