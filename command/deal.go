@@ -45,14 +45,14 @@ type CmdDeal struct {
 	MarketVersion          string
 }
 
-func GetCmdDeal(outputDir *string, minerFids, metadataJsonPath, metadataCsvPath string) *CmdDeal {
+func GetCmdDeal(outputDir *string, minerFids, metadataJsonPath, metadataCsvPath, wallet string) *CmdDeal {
 	cmdDeal := &CmdDeal{
 		SwanApiUrl:             config.GetConfig().Main.SwanApiUrl,
 		SwanApiKey:             config.GetConfig().Main.SwanApiKey,
 		SwanAccessToken:        config.GetConfig().Main.SwanAccessToken,
 		LotusClientApiUrl:      config.GetConfig().Lotus.ClientApiUrl,
 		LotusClientAccessToken: config.GetConfig().Lotus.ClientAccessToken,
-		SenderWallet:           config.GetConfig().Sender.Wallet,
+		SenderWallet:           wallet,
 		VerifiedDeal:           config.GetConfig().Sender.VerifiedDeal,
 		FastRetrieval:          config.GetConfig().Sender.FastRetrieval,
 		SkipConfirmation:       config.GetConfig().Sender.SkipConfirmation,
@@ -88,14 +88,14 @@ func GetCmdDeal(outputDir *string, minerFids, metadataJsonPath, metadataCsvPath 
 	return cmdDeal
 }
 
-func SendDealsByConfig(outputDir, minerFid, metadataJsonPath, metadataCsvPath string) ([]*libmodel.FileDesc, error) {
+func SendDealsByConfig(outputDir, minerFid, metadataJsonPath, metadataCsvPath, wallet string) ([]*libmodel.FileDesc, error) {
 	if metadataJsonPath == "" && metadataCsvPath == "" {
 		err := fmt.Errorf("both metadataJsonPath and metadataCsvPath is nil")
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	cmdDeal := GetCmdDeal(&outputDir, minerFid, metadataJsonPath, metadataCsvPath)
+	cmdDeal := GetCmdDeal(&outputDir, minerFid, metadataJsonPath, metadataCsvPath, wallet)
 	fileDescs, err := cmdDeal.SendDeals()
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -204,6 +204,7 @@ func (cmdDeal *CmdDeal) sendDeals2Miner(taskName string, outputDir string, fileD
 	}
 
 	dealSentNum := 0
+	total := len(fileDescs) * len(cmdDeal.MinerFids)
 	for _, fileDesc := range fileDescs {
 		if fileDesc.CarFileSize <= 0 {
 			logs.GetLogger().Error("File:" + fileDesc.CarFilePath + " %s is too small")
@@ -303,7 +304,7 @@ func (cmdDeal *CmdDeal) sendDeals2Miner(taskName string, outputDir string, fileD
 
 			deals = append(deals, deal)
 			dealSentNum = dealSentNum + 1
-			logs.GetLogger().Info("deal sent successfully, task name:", taskName, ", car file:", fileDesc.CarFilePath, ", dealCID|dealUuid:", deal.DealCid, ", start epoch:", deal.StartEpoch, ", miner:", deal.MinerFid)
+			logs.GetLogger().Infof("%d/%d deal sent successfully, task name: %s, car file: %s, dealCID|dealUuid: %s, start epoch: %d, miner: %s", dealSentNum, total, taskName, fileDesc.CarFilePath, deal.DealCid, deal.StartEpoch, deal.MinerFid)
 			if cmdDeal.StartDealTimeInterval > 0 {
 				time.Sleep(cmdDeal.StartDealTimeInterval * time.Millisecond)
 			}

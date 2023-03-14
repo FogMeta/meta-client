@@ -27,12 +27,46 @@ import (
 	"syscall"
 )
 
+const (
+	FlagSwanRepo = "swan-path"
+)
+
+var swanRep string
+
 func main() {
 	app := &cli.App{
 		Name:                 "swan-client",
 		Usage:                "A PiB level data onboarding tool for Filecoin Network",
 		Version:              command.VERSION,
 		EnableBashCompletion: true,
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:    "config",
+				Usage:   "Specify a configuration file",
+				Aliases: []string{"f"},
+			},
+			&cli.StringFlag{
+				Name:        FlagSwanRepo,
+				EnvVars:     []string{"SWAN_PATH"},
+				Usage:       "swan-client repo path",
+				Destination: &swanRep,
+			},
+		},
+		Before: func(ctx *cli.Context) error {
+			confFile := ctx.String("config")
+			if confFile != "" {
+				if _, err := os.Stat(confFile); err != nil {
+					return errors.Errorf("the specified configuration file was not found. path: %s", confFile)
+				}
+			}
+			if swanRep != "" {
+				if _, err := os.Stat(swanRep); err != nil {
+					return errors.Errorf("the specified swan-client repo was not found. path: %s", swanRep)
+				}
+			}
+			config.SetConfig(swanRep, confFile)
+			return nil
+		},
 		After: func(context *cli.Context) error {
 			if r := recover(); r != nil {
 				panic(r)
@@ -323,6 +357,10 @@ var taskCmd = &cli.Command{
 			Usage: "minerID is required when send private task (pass comma separated array of minerIDs)",
 		},
 		&cli.StringFlag{
+			Name:  "wallet",
+			Usage: "specify wallet address to send deal, the wallet address needs to be imported",
+		},
+		&cli.StringFlag{
 			Name:  "dataset",
 			Usage: "curated dataset",
 		},
@@ -341,6 +379,11 @@ var taskCmd = &cli.Command{
 	Action: func(ctx *cli.Context) error {
 		repoPath := config.GetConfig().Main.SwanRepo
 		wallet := config.GetConfig().Sender.Wallet
+		walletAddress := ctx.String("wallet")
+		if walletAddress != "" {
+			wallet = walletAddress
+		}
+
 		var first bool
 		if _, err := os.Stat(repoPath); err != nil {
 			first = true
@@ -389,7 +432,7 @@ var taskCmd = &cli.Command{
 
 		outputDir := ctx.String("out-dir")
 		_, fileDesc, _, total, err := command.CreateTaskByConfig(inputDir, &outputDir, ctx.String("name"), minerId,
-			ctx.String("dataset"), ctx.String("description"), auto, manual, ctx.Int("max-copy-number"))
+			ctx.String("dataset"), ctx.String("description"), auto, manual, ctx.Int("max-copy-number"), wallet)
 		if err != nil {
 			logs.GetLogger().Error(err)
 			return err
@@ -436,6 +479,11 @@ var dealCmd = &cli.Command{
 	Action: func(ctx *cli.Context) error {
 		repoPath := config.GetConfig().Main.SwanRepo
 		wallet := config.GetConfig().Sender.Wallet
+		walletAddress := ctx.String("wallet")
+		if walletAddress != "" {
+			wallet = walletAddress
+		}
+
 		var first bool
 		if _, err := os.Stat(repoPath); err != nil {
 			first = true
@@ -471,7 +519,7 @@ var dealCmd = &cli.Command{
 			logs.GetLogger().Info("Metadata csv file:", metadataCsvPath)
 		}
 		minerIds := ctx.String("miners")
-		if _, err := command.SendDealsByConfig(ctx.String("out-dir"), minerIds, metadataJsonPath, metadataCsvPath); err != nil {
+		if _, err := command.SendDealsByConfig(ctx.String("out-dir"), minerIds, metadataJsonPath, metadataCsvPath, wallet); err != nil {
 			logs.GetLogger().Error(err)
 			return err
 		}

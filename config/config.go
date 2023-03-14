@@ -83,13 +83,59 @@ func initConfig() {
 	config.Main.SwanRepo = filepath.Join(homedir, ".swan/client/boost")
 }
 
-func initChain() {
-	homedir, err := os.UserHomeDir()
-	if err != nil {
-		logs.GetLogger().Fatal("Cannot get home directory.")
+func initConfigByCmd(swanRepo, conf string) {
+	if conf != "" && swanRepo != "" {
+		if metaData, err := toml.DecodeFile(conf, &config); err != nil {
+			log.Fatal("Error:", err)
+		} else {
+			if !requiredFieldsAreGiven(metaData) {
+				log.Fatal("Required fields not given")
+			}
+		}
+		config.Main.SwanRepo = filepath.Join(swanRepo, "/client/boost")
 	}
 
-	chainInfoPath := filepath.Join(homedir, ".swan/client/chain-rpc.json")
+	if conf != "" && swanRepo == "" {
+		if metaData, err := toml.DecodeFile(conf, &config); err != nil {
+			log.Fatal("Error:", err)
+		} else {
+			if !requiredFieldsAreGiven(metaData) {
+				log.Fatal("Required fields not given")
+			}
+		}
+
+		homedir, err := os.UserHomeDir()
+		if err != nil {
+			logs.GetLogger().Fatal("Cannot get home directory.")
+		}
+		config.Main.SwanRepo = filepath.Join(homedir, "/client/boost")
+	}
+
+	if conf == "" && swanRepo != "" {
+		configFile := filepath.Join(swanRepo, "client/config.toml")
+		if metaData, err := toml.DecodeFile(configFile, &config); err != nil {
+			log.Fatal("Error:", err)
+		} else {
+			if !requiredFieldsAreGiven(metaData) {
+				log.Fatal("Required fields not given")
+			}
+		}
+		config.Main.SwanRepo = filepath.Join(swanRepo, "/client/boost")
+	}
+}
+
+func initChain(swanRepo string) {
+	var chainInfoPath string
+	if swanRepo != "" {
+		chainInfoPath = filepath.Join(swanRepo, "/client/chain-rpc.json")
+	} else {
+		homedir, err := os.UserHomeDir()
+		if err != nil {
+			logs.GetLogger().Fatal("Cannot get home directory.")
+		}
+		chainInfoPath = filepath.Join(homedir, ".swan/client/chain-rpc.json")
+	}
+
 	chainFile, err := os.Open(chainInfoPath)
 	if err != nil {
 		log.Fatalf("open chain-rpc.json failed,error: %v", err)
@@ -115,15 +161,24 @@ func GetChainByChainName(name string) (chain ChainRpcService, err error) {
 }
 
 func GetChain() ChainInfo {
-	if chainInfo == nil {
-		initChain()
-	}
 	return *chainInfo
 }
 
 func GetConfig() Configuration {
+	return *config
+}
+
+func SetConfig(swanRepo, confFile string) Configuration {
 	if config == nil {
-		initConfig()
+		if confFile == "" && swanRepo == "" {
+			initConfig()
+		} else {
+			initConfigByCmd(swanRepo, confFile)
+		}
+	}
+
+	if chainInfo == nil {
+		initChain(swanRepo)
 	}
 	return *config
 }
