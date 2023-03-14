@@ -255,6 +255,12 @@ func (cmdDeal *CmdDeal) sendDeals2Miner(taskName string, outputDir string, fileD
 			if cmdDeal.MarketVersion == libconstants.MARKET_VERSION_2 {
 				dealUuid, err := boost.GetClient(cmdDeal.SwanRepo).WithClient(lotusClient).StartDeal(&dealConfig)
 				if err != nil {
+					deals = append(deals, &libmodel.DealInfo{
+						MinerFid:   dealConfig.MinerFid,
+						DealCid:    "",
+						StartEpoch: 0,
+						Cost:       "fail",
+					})
 					logs.GetLogger().Error(err)
 					continue
 				}
