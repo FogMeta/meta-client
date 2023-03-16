@@ -108,7 +108,7 @@ func initConfigByCmd(swanRepo, conf string) {
 		if err != nil {
 			logs.GetLogger().Fatal("Cannot get home directory.")
 		}
-		config.Main.SwanRepo = filepath.Join(homedir, "/client/boost")
+		config.Main.SwanRepo = filepath.Join(homedir, ".swan//client/boost")
 	}
 
 	if conf == "" && swanRepo != "" {
