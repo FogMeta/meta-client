@@ -1,10 +1,10 @@
-# Swan-Client Tool Guide
+# Meta-Client Tool Guide
 
-[![Made by FilSwan](https://img.shields.io/badge/made%20by-FilSwan-green.svg)](https://www.filswan.com/)
-[![Chat on discord](https://img.shields.io/badge/join%20-discord-brightgreen.svg)](https://discord.com/invite/KKGhy8ZqzK)
+[![Made by FogMeta](https://img.shields.io/badge/made%20by-FogMeta-green.svg)](https://en.fogmeta.com/)
+
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg)](https://github.com/RichardLitt/standard-readme)
 
-Swan-client is an important Web3 toolkit. It provides different tools to help users connect to the Web3 world. It includes the following features:
+Meta-client is an important Web3 toolkit. It provides different tools to help users connect to the Web3 world. It includes the following features:
 
 -   Filecoin Deal Sender
 -   Blockchain RPC Service (supported by Pocket Network)
@@ -34,7 +34,7 @@ Swan-client is an important Web3 toolkit. It provides different tools to help us
 
 ## 1. Filecoin Deal Sender
 
-As a PiB-level data onboarding tool for Filecoin Network, Swan-client can help users prepare data and send the data to storage providers in the Filecoin network. The main features and steps are as follows:
+As a PiB-level data onboarding tool for Filecoin Network, Meta-client can help users prepare data and send the data to storage providers in the Filecoin network. The main features and steps are as follows:
 
 -   Generate CAR files from your source files by [graphsplit](#Graphsplit), [lotus](#Lotus-API), [IPFS](#IPFS-API), or [ipfs-car](#ipfs-car)
 -   Upload the CAR files to the IPFS server and generate metadata files (JSON and CSV) for sending offline deals
@@ -44,7 +44,7 @@ As a PiB-level data onboarding tool for Filecoin Network, Swan-client can help u
 
     **(Storage Providers can automatically import the deals by [Swan-Provider](https://github.com/filswan/go-swan-provider/tree/release-2.2.0-rc1))**
 
-swan-client can help users send their data to storage providers by creating three different kinds of tasks. The complete process from the source file to the storage provider is as follows:
+meta-client can help users send their data to storage providers by creating three different kinds of tasks. The complete process from the source file to the storage provider is as follows:
 
 -   **Private Task**
 
@@ -65,8 +65,8 @@ swan-client can help users send their data to storage providers by creating thre
 See [release assets](https://github.com/filswan/go-swan-client/releases)
 
 ```shell
-mkdir swan-client
-cd swan-client
+mkdir meta-client
+cd meta-client
 wget --no-check-certificate https://github.com/filswan/go-swan-client/releases/download/v2.2.0-rc1/install.sh
 chmod +x install.sh
 ./install.sh
@@ -77,20 +77,20 @@ chmod +x install.sh
 \:bell:**go 1.18.1+** is required
 
 ```shell
-git clone https://github.com/filswan/go-swan-client.git
-cd go-swan-client
+git clone https://github.com/FogMeta/meta-client.git
+cd meta-client
 git checkout release-2.2.0-rc1
 ./build_from_source.sh
 ```
 
-After you install from source code, the binary file `swan-client` is under the `./build` directory
+After you install from source code, the binary file `meta-client` is under the `./build` directory
 
 ### 1.2 Configuration
 
-Before creating a task, you should update your configuration in `~/.swan/client/config.toml` to ensure it is right.
+Before creating a task, you should update your configuration in `~/.meta/client/config.toml` to ensure it is right.
 
 ```shell
-vi ~/.swan/client/config.toml
+vi ~/.meta/client/config.toml
 ```
 ```
     [lotus]
@@ -124,10 +124,10 @@ vi ~/.swan/client/config.toml
 
 If you have set `market_version = "1.2"` in the `config.toml`, you must do the following steps:
 
--   Import the client wallet private key to the `$SWAN_PATH`(default: `~/.swan`):
+-   Import the client wallet private key to the `$META_PATH`(default: `~/.meta`):
 
 ```
-    swan-client wallet import wallet.key
+    meta-client wallet import wallet.key
 ```
 -   Add funds to client wallet Market Actor in order to send deals:
 
@@ -138,14 +138,14 @@ If you have set `market_version = "1.2"` in the `config.toml`, you must do the f
 
 ### 1.4 Generate CAR Files
 
-A CAR file is an independent unit to be sent to storage providers, swan-client provides four different ways to generate CAR files, and the CAR files will be imported to the lotus.
+A CAR file is an independent unit to be sent to storage providers, meta-client provides four different ways to generate CAR files, and the CAR files will be imported to the lotus.
 
 #### Graphsplit
 
 \:bell: This option can split a file under the source directory or the files in a whole directory to one or more car file(s) in the output directory.
 
 ```shell
-swan-client generate-car graphsplit car --input-dir [input_files_dir] --out-dir [car_files_output_dir]
+meta-client generate-car graphsplit car --input-dir [input_files_dir] --out-dir [car_files_output_dir]
 
 OPTIONS:
    --input-dir value, -i value       directory where source file(s) is(are) in
@@ -172,7 +172,7 @@ Credits should be given to FileDrive Team. More information can be found [here](
 \:bell: A running **Lotus** node is required.
 
 ```shell
-swan-client generate-car lotus --input-dir [input_files_dir] --out-dir [car_files_output_dir]
+meta-client generate-car lotus --input-dir [input_files_dir] --out-dir [car_files_output_dir]
 
 OPTIONS:
    --input-dir value, -i value  directory where source file(s) is(are) in
@@ -193,7 +193,7 @@ OPTIONS:
 \:bell: A running **IPFS** node is required.
 
 ```shell
-swan-client generate-car ipfs --input-dir [input_files_dir] --out-dir [car_file_output_dir]
+meta-client generate-car ipfs --input-dir [input_files_dir] --out-dir [car_file_output_dir]
 
 OPTIONS:
    --input-dir value, -i value  directory where source file(s) is(are) in
@@ -214,7 +214,7 @@ OPTIONS:
 \:bell: This option will merge files under the source directory to one CAR file in the output directory using the `ipfs-car` command.
 
 ```shell
-swan-client generate-car ipfs-car --input-dir [input_files_dir] --out-dir [car_file_output_dir]
+meta-client generate-car ipfs-car --input-dir [input_files_dir] --out-dir [car_file_output_dir]
 
 OPTIONS:
    --input-dir value, -i value  directory where source file(s) is(are) in
@@ -233,13 +233,13 @@ OPTIONS:
 
 `meta-car` provides a number of interactive tools with CAR files.
 ```
-swan-client meta-car -h
+meta-client meta-car -h
 
 NAME:
-   swan-client meta-car - Utility tools for CAR file(s)
+   meta-client meta-car - Utility tools for CAR file(s)
 
 USAGE:
-   swan-client meta-car command [command options] [arguments...]
+   meta-client meta-car command [command options] [arguments...]
 
 COMMANDS:
    generate-car  Generate CAR files of the specified size
@@ -255,7 +255,7 @@ COMMANDS:
 \:bell:- `[ipfs_server].download_url_prefix` and `[ipfs_server].upload_url_prefix` are required to upload CAR files to IPFS server.
 
 ```shell
-swan-client upload -input-dir [input_file_dir]
+meta-client upload -input-dir [input_file_dir]
 
 OPTIONS:
    --input-dir value, -i value  directory where source files are in
@@ -276,7 +276,7 @@ You can create three different kinds of tasks using the `car.json` or `car.csv`
 You can directly send deals to miners by creating a  private task.
 
 ```shell
-swan-client task --input-dir [json_or_csv_absolute_path] --out-dir [output_files_dir] --miners [storage_provider_id1,storage_provider_id2,...]
+meta-client task --input-dir [json_or_csv_absolute_path] --out-dir [output_files_dir] --miners [storage_provider_id1,storage_provider_id2,...]
 
 OPTIONS:
    --name value                          task name
@@ -298,7 +298,7 @@ OPTIONS:
 ### Auto-bid Task
 
 ```shell
-swan-client task --input-dir [json_or_csv_absolute_path] --out-dir [output_files_dir] --auto-bid true --max-copy-number 5
+meta-client task --input-dir [json_or_csv_absolute_path] --out-dir [output_files_dir] --auto-bid true --max-copy-number 5
 
 
 OPTIONS:
@@ -325,7 +325,7 @@ You can create manual-bid tasks on the swan platform. And each storage provider 
 **(1) Create manulal-bid task:**
 
 ```shell
-swan-client task --input-dir [json_or_csv_absolute_path] --out-dir [output_files_dir] --manual-bid true --max-copy-number 5
+meta-client task --input-dir [json_or_csv_absolute_path] --out-dir [output_files_dir] --manual-bid true --max-copy-number 5
 
 
 OPTIONS:
@@ -347,7 +347,7 @@ OPTIONS:
 **(2) Send deals to the storage providers:**
 
 ```shell
-swan-client deal --json [path]/[task-name]-metadata.json -out-dir [output_files_dir] -miners [storage_provider_id1,storage_provider_id2,... ]
+meta-client deal --json [path]/[task-name]-metadata.json -out-dir [output_files_dir] -miners [storage_provider_id1,storage_provider_id2,... ]
 
 OPTIONS:
    --csv value                the CSV file path of deal metadata
@@ -365,9 +365,9 @@ OPTIONS:
 
 ## 2. Blockchain RPC Service
 
-The second feature of swan-client is the blockchain RPC service. It is supported by [POKT RPCList](https://rpclist.info). As the first version, swan-client helps users [deploy a RPC service](#21-Deploy-RPC-Service) and use [RPC Command Service](#22-RPC-Command-Service). It is worth noting that the blockchain RPC services provided by swan-client are free at present.
+The second feature of meta-client is the blockchain RPC service. It is supported by [POKT RPCList](https://rpclist.info). As the first version, meta-client helps users [deploy a RPC service](#21-Deploy-RPC-Service) and use [RPC Command Service](#22-RPC-Command-Service). It is worth noting that the blockchain RPC services provided by meta-client are free at present.
 
-*   The following table shows the full list of the chains supported by swan-client until now.
+*   The following table shows the full list of the chains supported by meta-client until now.
 
 	ChainID | ChainName
 	:-: | :-:
@@ -387,11 +387,11 @@ The second feature of swan-client is the blockchain RPC service. It is supported
 
 ### 2.1 Deploy RPC Service
 
-You can deploy your RPC service by the following command. And the example gives you a test case of your RPC service. More importantly, the RPC service provided by swan-client is compatible with thirteen public chain jsonrpc-api. 
+You can deploy your RPC service by the following command. And the example gives you a test case of your RPC service. More importantly, the RPC service provided by meta-client is compatible with thirteen public chain jsonrpc-api. 
 
 You can find more public chain RPC-API documentation and blockchain browsers [here](document/rpc-cmd-example.md ":include").
 ```
-nohup swan-client daemon >> swan-client.log 2>&1 &
+nohup meta-client daemon >> meta-client.log 2>&1 &
 ```
 -   Example `eth_blockNumber` :
 ```shell
@@ -421,7 +421,7 @@ The RPC command can help you query the latest chain height and wallet balance. T
 
 Query the current height
 ```
-swan-client rpc height --chain ETH
+meta-client rpc height --chain ETH
 ```
 Output:
 ```
@@ -430,7 +430,7 @@ Output:
 ```
 Query the balance 
 ```
-swan-client rpc balance --chain ETH --address 0x29D5527CaA78f1946a409FA6aCaf14A0a4A0274b
+meta-client rpc balance --chain ETH --address 0x29D5527CaA78f1946a409FA6aCaf14A0a4A0274b
 ```
 Output:
 ```
@@ -443,7 +443,7 @@ Output:
 
 Query the current height
 ```
-swan-client rpc height --chain BNB
+meta-client rpc height --chain BNB
 ```
 Output:
 ```
@@ -453,7 +453,7 @@ Output:
 
 Query the balance 
 ```
-swan-client rpc balance --chain BNB --address 0x4430b3230294D12c6AB2aAC5C2cd68E80B16b581
+meta-client rpc balance --chain BNB --address 0x4430b3230294D12c6AB2aAC5C2cd68E80B16b581
 ```
 Output:
 
