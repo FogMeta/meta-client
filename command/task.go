@@ -85,7 +85,7 @@ func GetCmdTask(inputDir string, outputDir *string, taskName, dataset, descripti
 	return cmdTask
 }
 
-func CreateTaskByConfig(inputDir string, outputDir *string, taskName, minerFid, dataset, description string, auto, manual bool, maxCopyNumber int) (*string, []*libmodel.FileDesc, []*Deal, int, error) {
+func CreateTaskByConfig(inputDir string, outputDir *string, taskName, minerFid, dataset, description string, auto, manual bool, maxCopyNumber int, wallet string) (*string, []*libmodel.FileDesc, []*Deal, int, error) {
 	var bidMode int
 	bidMode = libconstants.TASK_BID_MODE_NONE
 	if auto {
@@ -96,7 +96,7 @@ func CreateTaskByConfig(inputDir string, outputDir *string, taskName, minerFid, 
 	}
 
 	cmdTask := GetCmdTask(inputDir, outputDir, taskName, dataset, description, bidMode, maxCopyNumber)
-	cmdDeal := GetCmdDeal(outputDir, minerFid, "", "")
+	cmdDeal := GetCmdDeal(outputDir, minerFid, "", "", wallet)
 	jsonFileName, fileDescs, deals, total, err := cmdTask.CreateTask(cmdDeal)
 	if err != nil {
 		logs.GetLogger().Error(err)

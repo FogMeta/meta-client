@@ -30,7 +30,7 @@ func TestCreateCarFiles() {
 	inputDir := filepath.Join(homeDir, "work/srcFiles")
 	outDir := filepath.Join(homeDir, "work/carFiles")
 
-	command.CreateCarFilesByConfig(inputDir, &outDir)
+	command.CreateCarFilesByConfig(inputDir, &outDir, false)
 }
 
 func TestCreateGoCarFiles() {
@@ -43,7 +43,7 @@ func TestCreateGoCarFiles() {
 	inputDir := filepath.Join(homeDir, "work/srcFiles")
 	outDir := filepath.Join(homeDir, "work/carFiles")
 
-	command.CreateGoCarFilesByConfig(inputDir, &outDir)
+	command.CreateGoCarFilesByConfig(inputDir, &outDir, 10, 32, true, false)
 }
 
 func TestCreateIpfsCarFiles() {
@@ -53,10 +53,10 @@ func TestCreateIpfsCarFiles() {
 		return
 	}
 
-	inputDir := filepath.Join(homeDir, "work/srcFiles")
-	outDir := filepath.Join(homeDir, "work/carFiles")
+	filepath.Join(homeDir, "work/srcFiles")
+	//outDir := filepath.Join(homeDir, "work/carFiles")
 
-	command.CreateIpfsCarFilesByConfig(inputDir, &outDir)
+	//command.CreateIpfsCarFilesByConfig(inputDir, &outDir)
 }
 
 func TestUpload() {
@@ -86,7 +86,7 @@ func TestCreateTask() {
 	inputDir := filepath.Join(homeDir, "work/carFiles")
 	outDir := filepath.Join(homeDir, "work/carFiles")
 
-	command.CreateTaskByConfig(inputDir, &outDir, "", "t03354", "", "")
+	command.CreateTaskByConfig(inputDir, &outDir, "", "t03354", "", "", true, false, 1, "")
 }
 
 func TestSendDeals() {
@@ -98,7 +98,7 @@ func TestSendDeals() {
 
 	outDir := filepath.Join(homeDir, "work/carFiles")
 
-	command.SendDealsByConfig(outDir, "t03354", "/Users/dorachen/work/carFiles/swan-task-oe1p20-metadata.json")
+	command.SendDealsByConfig(outDir, "t03354", "/Users/dorachen/work/carFiles/swan-task-oe1p20-metadata.json", "", "")
 }
 
 func TestSendAutoBidDeals() {
