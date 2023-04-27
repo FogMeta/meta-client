@@ -476,6 +476,10 @@ var dealCmd = &cli.Command{
 			Name:  "miners",
 			Usage: "miners must have been assigned the task (pass comma separated array of minerIDs)",
 		},
+		&cli.StringFlag{
+			Name:  "wallet",
+			Usage: "specify wallet address to send deal, the wallet address needs to be imported",
+		},
 	},
 	Action: func(ctx *cli.Context) error {
 		repoPath := config.GetConfig().Main.SwanRepo
